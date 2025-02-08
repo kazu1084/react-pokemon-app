@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import {useState} from "react";
 import logo from './logo.svg';
 import './App.css';
-import {getAllPokemon} from "./utils/mokemon.js";
+import {getAllPokemon,getPokemon} from "./utils/mokemon.js";
 function App() {
   const initialURL = "https://pokeapi.co/api/v2/pokemon";
   const [loading ,setLoding] = useState(true);
@@ -10,12 +10,20 @@ function App() {
   useEffect(() => {
     const fetchPokemonDate = async () => {
       //全てのポケモンデータを取得
-      let les = await getAllPokemon(initialURL);
-      console.log(les);
+      let res = await getAllPokemon(initialURL);
+      loadPokemon(res.results);
       setLoding(false);
     };
     fetchPokemonDate();
   });
+  const loadPokemon = (data) => {
+    let _pokemonData = Promise.all(
+      data.map((pokemon) => {
+        let pokemonRecord = getPokemon(pokemon.url);
+        return pokemonRecord;
+      })
+      );
+  };
   return (
     <div className="App">
       {loading ? (
